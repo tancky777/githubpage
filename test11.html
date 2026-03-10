@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Pnuts Translation App - 修改细节版本</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+      :root {
+        --header-height: 80px;
+        --purple-primary: #a700ff;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB',
+          'Microsoft YaHei', sans-serif;
+        background-color: #e5e7eb;
+        margin: 0;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        padding: 0;
+        user-select: none;
+      }
+
+      /* --- Utilities --- */
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .font-num {
+        font-family: 'DIN Alternate', 'Roboto', sans-serif;
+        letter-spacing: 0.5px;
+      }
+
+      /* Glass Card Base */
+      .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 8px 40px -12px rgba(167, 0, 255, 0.08);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+
+      .glass-card:hover {
+        background: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 15px 50px -12px rgba(167, 0, 255, 0.15);
+        border-color: #f3e8ff;
+      }
+      .glass-card:active {
+        transform: scale(0.98);
+      }
+
+      /* Crystal Banner - 强化渐变效果 */
+      .crystal-banner {
+        background: linear-gradient(to bottom, rgba(235, 215, 255, 0.5) 0%, rgba(255, 255, 255, 0.7) 25%, rgba(255, 255, 255, 0.9) 100%);
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px;
+        border-top: 1px solid rgba(255, 255, 255, 1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        border-left: 1px solid rgba(255, 255, 255, 0.8);
+        border-right: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow:
+          0 10px 30px -5px rgba(167, 0, 255, 0.12),
+          inset 0 0 20px rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+      }
+
+      /* 顶部重度光晕效果 */
+      .crystal-banner::before {
+        content: '';
+        position: absolute;
+        top: -120px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 200px;
+        background: radial-gradient(circle, rgba(167, 0, 255, 0.15) 0%, transparent 70%);
+        filter: blur(40px);
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* 斜向扫光效果 */
+      .crystal-banner::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+        transform: skewX(-25deg);
+        z-index: 1;
+        left: 10%;
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .crystal-banner:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          0 15px 50px -12px rgba(167, 0, 255, 0.15),
+          inset 0 0 20px rgba(255, 255, 255, 0.8);
+      }
+
+      /* 图标悬停缩放反馈 - 排除会议纪要卡片(#summary-card) */
+      .icon-box img,
+      .icon-box i {
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .glass-card:hover .icon-box img,
+      .glass-card:hover .icon-box i,
+      .crystal-banner:not(#summary-card):hover .icon-box img,
+      .crystal-banner:not(#summary-card):hover .icon-box i {
+        transform: scale(1.2);
+      }
+
+      /* 箭头按钮悬停反馈 - 修复反白效果 */
+      .group-arrow-hover:hover i {
+        transform: rotate(0deg) scale(1.1);
+        color: white !important; /* 关键修复：悬停时强制反白 */
+        transition: all 0.3s ease;
+      }
+
+      .active-card {
+        border-color: #a700ff !important;
+        box-shadow: 0 10px 30px -5px rgba(167, 0, 255, 0.2);
+      }
+
+      .force-purple {
+        filter: brightness(0) saturate(100%) invert(19%) sepia(66%) saturate(5833%) hue-rotate(275deg) brightness(96%) contrast(124%);
+      }
+
+      .phone-frame {
+        position: relative;
+        background-color: #111827;
+        border-radius: 50px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        width: 399px;
+        height: 836px;
+        border: 12px solid #111827;
+        transform: scale(0.96);
+        flex-shrink: 0;
+      }
+
+      @media (max-height: 900px) {
+        .phone-frame {
+          transform: scale(0.84);
+        }
+      }
+
+      .phone-screen {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, #f9faff, #f3f4f6);
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        border-radius: 38px;
+      }
+
+      .bottom-nav {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.8);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-bottom-left-radius: 38px;
+        border-bottom-right-radius: 38px;
+        z-index: 50;
+      }
+
+      .nav-item {
+        color: #94a3b8;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        height: 100%;
+        cursor: pointer;
+      }
+      .nav-item.active {
+        color: #a700ff;
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fade-in-down {
+        animation: fadeInDown 0.3s ease-out forwards;
+      }
+
+      .chip {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+        transition: all 0.2s;
+        border-radius: 9999px;
+      }
+      .chip.active {
+        background: #a700ff;
+        color: white;
+        border-color: #a700ff;
+        box-shadow: 0 4px 10px -2px rgba(167, 0, 255, 0.3);
+      }
+
+      .tab-title {
+        position: relative;
+        cursor: pointer;
+        padding-bottom: 8px;
+        font-size: 14px;
+        transition: all 0.3s;
+      }
+      .tab-title.active {
+        color: #1e293b;
+        font-weight: 700;
+      }
+      .tab-title.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #a700ff;
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+  <body class="text-slate-800">
+    <div class="phone-frame" id="app-container">
+      <!-- 刘海装饰 -->
+      <div class="device-notch w-[148px] h-[30px] bg-gray-900 absolute left-1/2 transform -translate-x-1/2 top-0 rounded-b-[18px] z-50"></div>
+
+      <div class="phone-screen relative">
+        <!-- 主内容滚动容器 -->
+        <main class="flex-1 overflow-y-auto hide-scrollbar pt-0 pb-24 relative" id="main-scroll-container">
+          <!-- 导航栏区域 -->
+          <div class="invisible-nav pb-2 sticky top-0 bg-[#F9FAFF]/90 backdrop-blur-md z-[100]">
+            <div class="h-[44px] w-full flex justify-between items-center px-6 text-slate-900 text-sm font-semibold pt-2">
+              <div id="clock">9:41</div>
+              <div class="flex gap-1.5 items-center text-xs opacity-60">
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-battery-full"></i>
+              </div>
+            </div>
+
+            <div class="px-4 mt-1 flex justify-between items-center gap-2 relative z-50">
+              <!-- 用户头像 -->
+              <div
+                class="bg-white rounded-full p-1 pr-3 flex items-center gap-2.5 shadow-sm border border-white cursor-pointer group"
+                onclick="toggleProfileDropdown(event)">
+                <div class="w-8 h-8 rounded-full bg-[#F5F3FF] border border-[#E9D5FF] flex items-center justify-center text-[16px]">😋</div>
+                <div class="flex items-center gap-1.5">
+                  <span class="font-bold text-slate-800 text-[12px]">Harrison_Dev</span>
+                  <i class="fas fa-chevron-down text-[8px] text-slate-400 transition-transform duration-300" id="profile-chevron"></i>
+                </div>
+                <div
+                  id="profile-menu"
+                  class="hidden absolute left-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 animate-fade-in-down">
+                  <div class="px-4 py-2 text-xs text-slate-600 hover:bg-slate-50">个人中心</div>
+                  <div class="px-4 py-2 text-xs text-slate-600 hover:bg-slate-50 border-t border-slate-50">退出登录</div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <div class="bg-[#F5F3FF] rounded-full px-3 py-1.5 flex items-center gap-1.5 border border-[#E9D5FF]">
+                  <i class="fas fa-coins text-[#A700FF] text-[10px]"></i>
+                  <span class="text-[#A700FF] font-bold font-num text-[13px]">6688</span>
+                </div>
+                <div
+                  class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm border border-white text-slate-400 cursor-pointer hover:text-[#A700FF] transition-colors">
+                  <i class="fas fa-globe-asia"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 首页内容 -->
+          <div id="view-home" class="px-4 mt-2">
+            <div id="home-top-content">
+              <div class="flex justify-between items-center px-1 mb-[14px]">
+                <h2 class="text-[18px] font-bold text-slate-900 tracking-tight">开始无障碍沟通</h2>
+                <span class="text-[10px] text-slate-400 font-medium">Pnuts·唯有极致·方能无界</span>
+              </div>
+
+              <!-- 模块 1: 会场翻译 -->
+              <div class="mb-4">
+                <div class="flex items-center gap-2 mb-4 px-1">
+                  <div class="w-1 h-3.5 bg-[#A700FF] rounded-full"></div>
+                  <h3 class="text-[15px] font-normal text-slate-900 tracking-tight">会场翻译</h3>
+                </div>
+
+                <div class="section-wrapper flex flex-col gap-4 relative">
+                  <!-- 高精翻译 -->
+                  <div class="flex flex-col relative z-20">
+                    <div class="crystal-banner px-5 py-4 w-full text-slate-900 shadow-sm relative z-20 cursor-pointer group" id="hero-card">
+                      <div class="relative z-10 w-full flex flex-col">
+                        <div class="flex justify-between items-center mb-1">
+                          <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-[#F5F3FF]">
+                              <i class="fas fa-crown text-[#A700FF] text-lg"></i>
+                            </div>
+                            <span class="font-bold text-slate-800 text-[14px]">高精翻译</span>
+                          </div>
+                          <button
+                            class="bg-white/50 border border-white/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] flex items-center gap-1.5 shadow-sm text-slate-600 hover:bg-white transition-colors">
+                            <i class="far fa-play-circle"></i>
+                            <span>观看实测对比</span>
+                          </button>
+                        </div>
+
+                        <div class="flex justify-between items-center w-full mt-0.5">
+                          <h2 class="text-[11px] font-bold text-[#A700FF] whitespace-nowrap leading-tight">
+                            全球高端会场同传首选，跨语言沟通的终极方案
+                          </h2>
+                          <button
+                            onclick="toggleHeroPanel(event)"
+                            id="hero-toggle-btn"
+                            class="bg-[#F5F3FF] text-[#A700FF]/60 px-2 py-0.5 rounded-full text-[9px] flex items-center gap-0.5 font-bold transition-all outline-none active:scale-95 hover:bg-[#A700FF] hover:text-white">
+                            <span>展开</span>
+                            <i class="fas fa-chevron-down text-[7px] mt-[1px] transition-transform duration-300"></i>
+                          </button>
+                        </div>
+
+                        <div class="flex justify-between items-end mt-2 pt-1">
+                          <div class="flex items-baseline gap-1">
+                            <span class="text-lg font-bold font-num text-[#A700FF]">200</span>
+                            <span class="text-xs text-slate-400">点/分钟</span>
+                          </div>
+                          <button
+                            class="bg-[#A700FF] text-white text-[10px] px-3 py-1 rounded-full font-bold shadow-md active:scale-95 hover:bg-[#8B00D5] transition-colors">
+                            立即开始
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 高精详情面板 -->
+                    <div
+                      id="hero-details-panel"
+                      class="hidden w-full bg-white rounded-2xl shadow-sm mt-4 overflow-hidden relative z-10 animate-fade-in-down border-t-4 border-[#A700FF]/30">
+                      <div class="p-5 flex flex-col gap-4">
+                        <div class="space-y-4 text-slate-600 text-[12px] leading-relaxed">
+                          <div class="flex gap-2.5 items-start">
+                            <i class="fas fa-circle text-[#A700FF] text-[5px] mt-[8px] flex-shrink-0 opacity-80"></i>
+                            <p class="text-justify text-slate-800 leading-relaxed">
+                              Pnuts高精翻译是专为国际大型会场与高端会议打造的下一代同传系统。它代表了当前同传领域最具领先性的技术水准，更是面向高标准、高密度信息场景的旗舰级解决方案。
+                            </p>
+                          </div>
+                          <div class="flex gap-2.5 items-start">
+                            <i class="fas fa-circle text-[#A700FF] text-[5px] mt-[8px] flex-shrink-0 opacity-80"></i>
+                            <p class="text-justify leading-relaxed text-slate-800">
+                              在对准确度要求极高的正式会场，我们提供极致精准的同声传译体验。无论是涉及大量专业术语的行业会议，还是多方即时交锋的圆桌讨论，Pnuts都能在复杂噪音环境中精准捕捉语义重点，确保核心信息即时、完整、不受干扰地传递。
+                            </p>
+                          </div>
+                          <div class="flex gap-2.5 items-start">
+                            <i class="fas fa-circle text-[#A700FF] text-[5px] mt-[8px] flex-shrink-0 opacity-80"></i>
+                            <p class="text-justify text-slate-800 leading-relaxed">
+                              面对正式、重要、绝不容错的会议，Pnuts高精翻译是无需犹豫的最佳选择。
+                            </p>
+                          </div>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col gap-3">
+                          <button
+                            class="text-[11px] text-[#A700FF] font-medium flex items-center gap-2 transition-opacity hover:opacity-80 text-left">
+                            <i class="fas fa-globe-asia opacity-70 w-4 text-center"></i>
+                            <span>查看全球高端会场应用案例</span>
+                            <i class="fas fa-arrow-right text-[10px] ml-auto"></i>
+                          </button>
+                          <button
+                            class="text-[11px] text-[#A700FF] font-medium flex items-center gap-2 transition-opacity hover:opacity-80 text-left">
+                            <i class="fas fa-file-alt opacity-70 w-4 text-center"></i>
+                            <span>复杂会场环境的解决方案及说明</span>
+                            <i class="fas fa-arrow-right text-[10px] ml-auto"></i>
+                          </button>
+                          <button
+                            class="text-[11px] text-[#A700FF] font-medium flex items-center gap-2 transition-opacity hover:opacity-80 text-left">
+                            <i class="fas fa-headset opacity-70 w-4 text-center"></i>
+                            <span>联系商务顾问</span>
+                            <i class="fas fa-arrow-right text-[10px] ml-auto"></i>
+                          </button>
+                        </div>
+                        <div class="pt-2">
+                          <button
+                            class="w-full bg-[#A700FF] text-white text-[14px] font-normal py-3 rounded-full shadow-lg shadow-purple-200 active:scale-[0.98] transition-all">
+                            立即开始 (200点/分钟)
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 子功能网格 -->
+                  <div class="grid grid-cols-2 gap-4 relative">
+                    <!-- 通用速译卡片 -->
+                    <div id="general-card" class="glass-card p-3 flex flex-col items-start h-auto min-h-[108px] relative cursor-pointer group">
+                      <div class="w-full flex justify-between items-start mb-1">
+                        <div class="icon-box w-8 h-8 rounded-lg flex items-center justify-center bg-[#F5F3FF]">
+                          <img
+                            src="https://raw.githubusercontent.com/BabyMoira/Pnutsicons/refs/heads/main/biaozhun.svg"
+                            class="w-5 h-5 force-purple"
+                            alt="icon" />
+                        </div>
+                        <div
+                          class="w-5 h-5 rounded-full bg-[#F5F3FF]/80 flex items-center justify-center transition-all cursor-pointer hover:bg-[#A700FF] group-arrow-hover">
+                          <i class="fas fa-arrow-right transform -rotate-45 text-[8px] text-[#A700FF]/70 hover:text-white"></i>
+                        </div>
+                      </div>
+                      <h4 class="font-bold text-slate-800 text-[13px] mb-0.5 leading-tight">通用速译</h4>
+                      <div class="flex items-center gap-1.5 w-full mb-1">
+                        <p class="text-slate-400 text-[10px] leading-tight truncate max-w-[55%]">会场经济之选</p>
+                        <button
+                          onclick="toggleGeneralPanel(event)"
+                          id="general-toggle-btn"
+                          class="bg-[#F5F3FF] text-[#A700FF]/60 px-2 py-0.5 rounded-full text-[9px] flex items-center gap-0.5 font-bold transition-all outline-none active:scale-95 hover:bg-[#A700FF] hover:text-white">
+                          <span>展开</span>
+                          <i class="fas fa-chevron-down text-[7px] mt-[1px] transition-transform duration-300"></i>
+                        </button>
+                      </div>
+                      <div class="mt-auto flex items-baseline gap-0.5">
+                        <span class="text-[#A700FF] font-bold text-[15px] font-num">50</span>
+                        <span class="text-slate-400 text-[10px]">点/分钟</span>
+                      </div>
+                    </div>
+
+                    <!-- 多语同传卡片 -->
+                    <div id="multi-card" class="glass-card p-3 flex flex-col items-start h-auto min-h-[108px] relative cursor-pointer group">
+                      <div class="w-full flex justify-between items-start mb-1">
+                        <div class="icon-box w-8 h-8 rounded-lg flex items-center justify-center bg-[#F5F3FF]">
+                          <img
+                            src="https://raw.githubusercontent.com/BabyMoira/Pnutsicons/refs/heads/main/yiduiduo.svg"
+                            class="w-5 h-5 force-purple"
+                            alt="icon" />
+                        </div>
+                        <div
+                          class="w-5 h-5 rounded-full bg-[#F5F3FF]/80 flex items-center justify-center transition-all cursor-pointer hover:bg-[#A700FF] group-arrow-hover">
+                          <i class="fas fa-arrow-right transform -rotate-45 text-[8px] text-[#A700FF]/70 hover:text-white"></i>
+                        </div>
+                      </div>
+                      <h4 class="font-bold text-slate-800 text-[13px] mb-0.5 leading-tight">多语同传</h4>
+                      <div class="flex items-center gap-1.5 w-full mb-1">
+                        <p class="text-slate-400 text-[10px] truncate max-w-[55%]">支持一对多</p>
+                        <button
+                          onclick="toggleMultiPanel(event)"
+                          id="multi-toggle-btn"
+                          class="bg-[#F5F3FF] text-[#A700FF]/60 px-2 py-0.5 rounded-full text-[9px] flex items-center gap-0.5 font-bold transition-all outline-none active:scale-95 hover:bg-[#A700FF] hover:text-white">
+                          <span>展开</span>
+                          <i class="fas fa-chevron-down text-[7px] mt-[1px] transition-transform duration-300"></i>
+                        </button>
+                      </div>
+                      <div class="mt-auto">
+                        <span class="text-slate-500 text-[10px] bg-slate-100 px-1.5 py-0.5 rounded">按配置收费</span>
+                      </div>
+                    </div>
+
+                    <!-- 面板内容 -->
+                    <div
+                      id="general-details-panel"
+                      class="hidden col-span-2 w-full bg-white rounded-2xl shadow-sm animate-fade-in-down border-t-4 border-[#A700FF]/30">
+                      <div class="p-5 flex flex-col gap-2">
+                        <div class="space-y-3 text-slate-600 text-[12px] leading-relaxed">
+                          <div class="flex gap-2.5 items-start">
+                            <i class="fas fa-circle text-[#A700FF] text-[5px] mt-[8px] flex-shrink-0 opacity-80"></i>
+                            <p class="text-justify text-slate-800">
+                              通用速译作为会场的经济之选，相比高精翻译，省略了两个流程，一是没有原文校正环节，不能自动修正原文的识别错误，二是对翻译结果仅有一次修正，缺少第二次深度优化。因此，它的翻译质量相对差一些，但响应速度更快、使用成本更低。
+                            </p>
+                          </div>
+                          <div class="flex gap-2.5 items-start">
+                            <i class="fas fa-circle text-[#A700FF] text-[5px] mt-[8px] flex-shrink-0 opacity-80"></i>
+                            <p class="text-justify leading-relaxed">
+                              在说话人口齿清晰、环境安静，讨论内容不包含专业术语时其效果可达高精翻译的80%-90%，比较适合日常沟通使用。但正因为流程更轻、缺乏深度语义校正，且其对上下文的处理能力有限。因此在口音重、环境嘈杂或涉及专业术语的深度交谈中，容易导致翻译结果偏差明显，这种场景下更推荐使用高精翻译。
+                            </p>
+                          </div>
+                        </div>
+                        <div class="pt-2 mt-2">
+                          <button
+                            class="w-full bg-[#A700FF] text-white text-[14px] font-normal py-3 rounded-full shadow-lg active:scale-95 transition-transform">
+                            立即开始 (50点/分钟)
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      id="multi-details-panel"
+                      class="hidden col-span-2 w-full bg-white rounded-2xl shadow-sm animate-fade-in-down border-t-4 border-[#A700FF]/30">
+                      <div class="p-5 flex flex-col gap-2">
+                        <div class="space-y-3 text-slate-600 text-[12px] leading-relaxed">
+                          <div class="flex gap-2.5 items-start">
+                            <i class="fas fa-circle text-[#A700FF] text-[5px] mt-[8px] flex-shrink-0 opacity-80"></i>
+                            <p class="text-justify text-slate-800">
+                              多语同传是基于高精翻译与通用速译进一步开发的功能，支持将一种语言同时翻译为多种目标语言，适用于多语种参与的交流场合。用户可通过扫码进入翻译房间，按需选择自己熟悉的语言查看译文，体验灵活。
+                            </p>
+                          </div>
+                          <div class="flex gap-2.5 items-start">
+                            <i class="fas fa-circle text-[#A700FF] text-[5px] mt-[8px] flex-shrink-0 opacity-80"></i>
+                            <p class="text-justify leading-relaxed">
+                              该功能即将升级投屏方案，届时将可实现在同一屏幕上并行展示多语种翻译结果的效果。多语同传解决了通用速译与高精翻译仅支持一对一或双语互译的限制，为国际交流、多语言会议等场景提供高效解决方案。
+                            </p>
+                          </div>
+                        </div>
+                        <div class="pt-2 mt-2">
+                          <button
+                            class="w-full bg-[#A700FF] text-white text-[14px] font-normal py-3 rounded-full shadow-lg active:scale-95 transition-transform">
+                            立即开始 (按配置收费)
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 模块 2: 会议纪要 -->
+              <div class="mb-4">
+                <div class="w-full h-px border-t border-dashed border-slate-300/60 my-4"></div>
+                <div class="px-1 flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-2">
+                    <div class="w-1 h-3.5 bg-[#A700FF] rounded-full"></div>
+                    <h3 class="text-[15px] font-normal text-slate-900 tracking-tight">更多功能</h3>
+                  </div>
+                  <div
+                    class="flex items-center gap-1.5 bg-[#F5F3FF] border border-[#E9D5FF] px-3 py-1 rounded-full cursor-pointer hover:bg-white transition-colors">
+                    <i class="fas fa-flask text-[#A700FF] text-[10px]"></i>
+                    <span class="text-[#A700FF] text-[10px] font-bold">实验室</span>
+                  </div>
+                </div>
+
+                <div class="section-wrapper flex flex-col gap-4 relative">
+                  <!-- 会议纪要卡片 -->
+                  <div class="flex flex-col relative z-20">
+                    <div class="crystal-banner px-4 py-3 w-full flex flex-col gap-1 group shadow-sm cursor-pointer" id="summary-card">
+                      <div class="relative z-10 w-full flex flex-col gap-1.5">
+                        <div class="flex items-center gap-2">
+                          <div class="icon-box w-8 h-8 rounded-lg flex items-center justify-center bg-[#F5F3FF]">
+                            <img
+                              src="https://raw.githubusercontent.com/BabyMoira/Pnutsicons/refs/heads/main/AI.svg"
+                              class="w-5 h-5 force-purple"
+                              alt="icon" />
+                          </div>
+                          <span class="font-bold text-slate-800 text-[14px]">会议纪要</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                          <p class="text-slate-500 text-[11px] truncate overflow-hidden">极致精准记录，会议结束一键直出总结</p>
+                          <button
+                            onclick="toggleSummaryPanel(event)"
+                            id="summary-toggle-btn"
+                            class="bg-[#F5F3FF] text-[#A700FF]/60 px-2 py-0.5 rounded-full text-[9px] flex items-center gap-0.5 font-bold transition-all outline-none active:scale-95 hover:bg-[#A700FF] hover:text-white">
+                            <span>展开</span>
+                            <i class="fas fa-chevron-down text-[7px] mt-[1px] transition-transform duration-300"></i>
+                          </button>
+                        </div>
+
+                        <div class="flex items-center justify-between mt-0.5 pt-1 border-t border-transparent">
+                          <div class="flex items-baseline gap-1">
+                            <span class="text-lg font-bold font-num text-[#A700FF]">50</span>
+                            <span class="text-xs text-slate-400">点/分钟</span>
+                          </div>
+                          <button
+                            class="bg-[#A700FF] text-white text-[10px] px-3 py-1 rounded-full font-bold shadow-md active:scale-95 hover:bg-[#8B00D5] transition-colors">
+                            立即开始
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 纪要详情面板 -->
+                    <div
+                      id="summary-details-panel"
+                      class="hidden w-full bg-white rounded-2xl shadow-sm mt-4 overflow-hidden relative z-10 animate-fade-in-down border-t-4 border-[#A700FF]/30">
+                      <div class="p-5 flex flex-col gap-2">
+                        <div class="space-y-4 text-slate-600 text-[12px] leading-relaxed">
+                          <div class="flex gap-2.5 items-start">
+                            <i class="fas fa-circle text-[#A700FF] text-[5px] mt-[8px] flex-shrink-0 opacity-80"></i>
+                            <p class="text-justify text-slate-800 leading-relaxed">
+                              将高端会场的顶尖同传技术，应用于日常文字记录。依托 Pnuts
+                              核心同传引擎，提供极致精准的语音转文字能力，完美还原完整文字实录，无惧任何细节丢失。
+                            </p>
+                          </div>
+                          <div class="flex gap-2.5 items-start">
+                            <i class="fas fa-circle text-[#A700FF] text-[5px] mt-[8px] flex-shrink-0 opacity-80"></i>
+                            <p class="text-justify leading-relaxed">
+                              一键直出，极速总结。基于精准文字底稿，只需一键AI能够精准提炼核心议题与结论，即刻生成高质量纪要，真正实现“会开完，事记完”
+                            </p>
+                          </div>
+                          <div class="flex gap-2.5 items-start">
+                            <i class="fas fa-circle text-[#A700FF] text-[5px] mt-[8px] flex-shrink-0 opacity-80"></i>
+                            <p class="text-justify text-slate-800 leading-relaxed">
+                              支持 AI对话式精准修整，直达100%完美。在自动总结的基础上，支持像聊天一样指挥
+                              AI进行微调。无论是补充细节还是调整措辞，只需简单的对话指令，即可快速获得可直接交付的专业级纪要。
+                            </p>
+                          </div>
+                        </div>
+                        <div class="pt-2 mt-2">
+                          <button
+                            class="w-full bg-[#A700FF] text-white text-[14px] font-normal py-3 rounded-full shadow-lg active:scale-95 transition-transform">
+                            立即开始 (50点/分钟)
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-4">
+                    <div class="glass-card p-3 flex flex-col items-start h-auto min-h-[108px] group relative cursor-pointer">
+                      <div class="w-full flex justify-between items-start mb-1">
+                        <div class="icon-box w-8 h-8 rounded-lg flex items-center justify-center bg-[#F5F3FF]">
+                          <img
+                            src="https://raw.githubusercontent.com/BabyMoira/Pnutsicons/refs/heads/main/duihua.svg"
+                            class="w-5 h-5 force-purple"
+                            alt="icon" />
+                        </div>
+                        <div
+                          class="w-5 h-5 rounded-full bg-[#F5F3FF]/80 flex items-center justify-center transition-all cursor-pointer hover:bg-[#A700FF] group-arrow-hover">
+                          <i class="fas fa-arrow-right transform -rotate-45 text-[8px] text-[#A700FF]/70 hover:text-white"></i>
+                        </div>
+                      </div>
+                      <h4 class="font-bold text-slate-800 text-[13px] mb-0.5 leading-tight">
+                        对话沟通
+                        <span class="text-[10px] font-medium text-slate-500 ml-0.5">（Beta）</span>
+                      </h4>
+                      <p class="text-slate-400 text-[10px] leading-tight truncate whitespace-nowrap mb-1">多人跨语种交流</p>
+                      <div class="mt-auto flex items-baseline gap-0.5">
+                        <span class="text-[#A700FF] font-bold text-[15px] font-num">50</span>
+                        <span class="text-slate-400 text-[10px]">点/分钟</span>
+                      </div>
+                    </div>
+
+                    <div class="glass-card p-3 flex flex-col items-start gap-1.5 h-auto min-h-[108px] bg-slate-50/50 border-slate-200">
+                      <div class="flex flex-col gap-1.5 w-full h-full justify-center">
+                        <div class="flex items-center gap-2 mb-1">
+                          <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-slate-100 text-slate-400">
+                            <i class="fas fa-ellipsis-h text-sm"></i>
+                          </div>
+                          <span class="font-bold text-slate-500 text-[14px]">更多功能</span>
+                        </div>
+                        <p class="text-slate-400 text-[10px] leading-tight pl-1">敬请期待...</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 历史房间板块 -->
+            <div id="history-section" class="mt-4 mb-4">
+              <div class="search-card-container glass-card p-4 space-y-3 sticky top-0 z-20 mb-3 shadow-sm">
+                <div class="flex items-center justify-start gap-6 w-full">
+                  <div class="tab-title active text-sm">我创建的</div>
+                  <div class="tab-title text-slate-400 text-sm cursor-pointer hover:text-slate-600 transition-colors">我管理的</div>
+                </div>
+                <div class="w-full">
+                  <div
+                    class="w-full bg-[#F5F6FA] rounded-xl h-10 flex items-center px-3 gap-2 border border-transparent focus-within:border-[#A700FF]/30 transition-all">
+                    <i class="fas fa-search text-slate-300 text-xs"></i>
+                    <input
+                      type="text"
+                      placeholder="搜索房间名称或ID"
+                      class="bg-transparent w-full text-xs outline-none text-slate-700 placeholder-slate-400 font-medium" />
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 w-full">
+                  <div
+                    class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 text-xs flex-shrink-0 shadow-sm hover:border-[#A700FF] hover:text-[#A700FF] transition-all cursor-pointer">
+                    <i class="fas fa-filter"></i>
+                  </div>
+                  <div class="flex gap-2 overflow-x-auto hide-scrollbar flex-1 items-center w-full pb-1">
+                    <button class="chip active px-3 py-1 text-[10px] font-medium whitespace-nowrap flex-shrink-0">近三天</button>
+                    <button class="chip px-3 py-1 text-[10px] font-medium whitespace-nowrap flex-shrink-0 hover:border-[#A700FF]/50">昨天</button>
+                    <button class="chip px-3 py-1 text-[10px] font-medium whitespace-nowrap flex-shrink-0 hover:border-[#A700FF]/50">本周</button>
+                    <button class="chip px-3 py-1 text-[10px] font-medium whitespace-nowrap flex-shrink-0 hover:border-[#A700FF]/50">上周</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2 mb-4 px-1">
+                <div class="w-1 h-3.5 bg-[#A700FF] rounded-full"></div>
+                <h2 class="text-[14px] font-normal text-slate-900 tracking-tight">
+                  房间列表
+                  <span class="text-slate-400 font-normal text-xs ml-1">(2)</span>
+                </h2>
+              </div>
+
+              <div class="space-y-3" id="room-list-container">
+                <div class="glass-card p-3 space-y-2.5 hover:border-[#A700FF]/50 transition-colors group cursor-pointer">
+                  <div class="flex justify-between items-start">
+                    <h4 class="font-bold text-slate-900 text-[13px] flex-1 mr-2 leading-tight">2025.05.22-15:49 Translation room</h4>
+                    <i class="fas fa-pen text-slate-300 text-[10px] pt-0.5 hover:text-[#A700FF] transition-colors"></i>
+                  </div>
+                  <div class="flex flex-col gap-1.5 text-[10px] text-slate-500 font-num">
+                    <div class="flex justify-between items-center w-full">
+                      <div class="flex items-center gap-1.5">
+                        <i class="fas fa-hashtag text-slate-400 text-[9px] w-3 text-center"></i>
+                        <span>3646</span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <i class="fas fa-user text-slate-400 text-[9px] w-3 text-center"></i>
+                        <span>harrsion</span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <i class="fas fa-hourglass-half text-slate-400 text-[9px] w-3 text-center"></i>
+                        <span>1天 5小时 31分</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <i class="fas fa-calendar-alt text-slate-400 text-[9px] w-3 text-center"></i>
+                      <span class="tracking-tight">
+                        2025-12-01 18:06:04
+                        <span class="opacity-60">(GMT+8)</span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="flex gap-2 pt-1">
+                    <button
+                      class="flex-1 py-1.5 rounded-lg text-[10px] border border-slate-200 text-slate-500 font-medium hover:bg-white transition-colors">
+                      分享
+                    </button>
+                    <button
+                      class="flex-1 py-1.5 rounded-lg text-[10px] border border-slate-200 text-slate-500 font-medium hover:bg-white transition-colors">
+                      设置
+                    </button>
+                    <button
+                      class="bg-[#F5F3FF] text-[#A700FF] flex-[1.2] py-1.5 rounded-lg text-[10px] font-bold active:scale-95 transition-all hover:bg-[#A700FF] hover:text-white">
+                      进入
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center py-6 text-xs text-slate-300">已经到底了 ~</div>
+        </main>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+          <div class="grid grid-cols-2 items-center px-4 py-3 pb-6">
+            <div class="nav-item active" onclick="switchTab('home', this)">
+              <i class="fas fa-home text-lg"></i>
+              <span class="text-[10px] font-medium">创建房间</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('history', this)">
+              <i class="fas fa-briefcase text-lg"></i>
+              <span class="text-[10px] font-medium">历史房间</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 交互脚本 -->
+    <script>
+      function switchTab(tabName, element) {
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'))
+        element.classList.add('active')
+        const homeTop = document.getElementById('home-top-content')
+        if (tabName === 'home') homeTop.classList.remove('hidden')
+        else homeTop.classList.add('hidden')
+        document.getElementById('main-scroll-container').scrollTo({ top: 0, behavior: 'auto' })
+      }
+
+      function toggleHeroPanel(e) {
+        e.stopPropagation()
+        toggleSpecificPanel('hero-details-panel', 'hero-card', '#hero-toggle-btn i')
+      }
+      function toggleGeneralPanel(e) {
+        e.stopPropagation()
+        toggleSpecificPanel('general-details-panel', 'general-card', '#general-toggle-btn i')
+      }
+      function toggleMultiPanel(e) {
+        e.stopPropagation()
+        toggleSpecificPanel('multi-details-panel', 'multi-card', '#multi-toggle-btn i', 'multi')
+      }
+      function toggleSummaryPanel(e) {
+        e.stopPropagation()
+        toggleSpecificPanel('summary-details-panel', 'summary-card', '#summary-toggle-btn i', 'summary')
+      }
+
+      function toggleSpecificPanel(panelId, cardId, iconSelector) {
+        const panel = document.getElementById(panelId)
+        const card = document.getElementById(cardId)
+        const icon = document.querySelector(iconSelector)
+        if (!panel) return
+
+        const isHidden = panel.classList.contains('hidden')
+        closeAllPanels()
+
+        if (isHidden) {
+          panel.classList.remove('hidden')
+          if (card) card.classList.add('active-card')
+          if (icon) icon.style.transform = 'rotate(180deg)'
+        }
+      }
+
+      function closeAllPanels() {
+        const configs = [
+          { id: 'hero-details-panel', card: 'hero-card', icon: '#hero-toggle-btn i' },
+          { id: 'general-details-panel', card: 'general-card', icon: '#general-toggle-btn i' },
+          { id: 'multi-details-panel', card: 'multi-card', icon: '#multi-toggle-btn i' },
+          { id: 'summary-details-panel', card: 'summary-card', icon: '#summary-toggle-btn i' },
+        ]
+        configs.forEach(p => {
+          const el = document.getElementById(p.id)
+          const card = document.getElementById(p.card)
+          const icon = document.querySelector(p.icon)
+          if (el) el.classList.add('hidden')
+          if (card) card.classList.remove('active-card')
+          if (icon) icon.style.transform = 'rotate(0deg)'
+        })
+      }
+
+      function toggleProfileDropdown(e) {
+        e.stopPropagation()
+        const menu = document.getElementById('profile-menu')
+        const chev = document.getElementById('profile-chevron')
+        if (menu.classList.contains('hidden')) {
+          menu.classList.remove('hidden')
+          chev.style.transform = 'rotate(180deg)'
+        } else {
+          menu.classList.add('hidden')
+          chev.style.transform = 'rotate(0deg)'
+        }
+      }
+
+      function updateClock() {
+        const now = new Date()
+        const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0')
+        const el = document.getElementById('clock')
+        if (el) el.textContent = time
+      }
+      setInterval(updateClock, 1000)
+      updateClock()
+
+      document.addEventListener('click', e => {
+        if (!e.target.closest('.crystal-banner') && !e.target.closest('.glass-card') && !e.target.closest('[id$="-panel"]')) {
+          closeAllPanels()
+          const menu = document.getElementById('profile-menu')
+          if (menu) menu.classList.add('hidden')
+          const chev = document.getElementById('profile-chevron')
+          if (chev) chev.style.transform = 'rotate(0deg)'
+        }
+      })
+    </script>
+  </body>
+</html>

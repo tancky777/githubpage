@@ -51,12 +51,9 @@
 
         /* Crystal Banner - 垂直渐变 (无白边，阴影统一) */
         .crystal-banner {
-            /* 恢复为最开始的垂直渐变 */
             background: linear-gradient(to bottom, rgba(235, 215, 255, 0.5) 0%, rgba(255, 255, 255, 0.7) 25%, rgba(255, 255, 255, 0.9) 100%);
             position: relative; overflow: hidden; border-radius: 24px;
-            /* 保持无白边 */
             border: none;
-            /* 与通用速译等普通卡片的投影保持完全一致 */
             box-shadow: 0 8px 40px -12px rgba(167, 0, 255, 0.08);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
@@ -71,7 +68,6 @@
             transform: translateX(-50%); 
             width: 120%; 
             height: 220px; 
-            /* 降低紫色光晕的浓度，增大模糊范围，使其如晨曦般柔和 */
             background: radial-gradient(circle, rgba(167, 0, 255, 0.08) 0%, transparent 70%);
             filter: blur(50px); 
             z-index: 0;
@@ -86,7 +82,6 @@
             left: -100%; 
             width: 50%; 
             height: 100%;
-            /* 降低扫光亮度，避免反光过于刺眼 */
             background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0) 100%);
             transform: skewX(-25deg); 
             z-index: 1; 
@@ -97,9 +92,7 @@
 
         .crystal-banner:hover {
             transform: translateY(-2px);
-            /* 悬停时的投影也与其他普通卡片保持完全一致 */
             box-shadow: 0 15px 50px -12px rgba(167, 0, 255, 0.15);
-            /* 悬停时渐变稍微亮一点，增加互动反馈 */
             background: linear-gradient(to bottom, rgba(245, 225, 255, 0.6) 0%, rgba(255, 255, 255, 0.8) 25%, rgba(255, 255, 255, 1) 100%);
         }
 
@@ -163,6 +156,13 @@
             box-shadow: 0 -25px 40px -20px rgba(0, 0, 0, 0.06), 0 -8px 20px -5px rgba(167, 0, 255, 0.03);
         }
         
+        .search-card-container.is-pinned {
+            /* 吸顶时的多层弥散下投影 (与底部导航呼应) */
+            box-shadow: 0 25px 40px -20px rgba(0, 0, 0, 0.06), 0 8px 20px -5px rgba(167, 0, 255, 0.04) !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-color: #F3E8FF !important;
+        }
+
         .nav-item {
             color: #94A3B8; display: flex; flex-direction: column; 
             align-items: center; justify-content: center;
@@ -403,115 +403,256 @@
                                                 </div>
                                             </div>
                                             <div class="pt-2 mt-2">
-                                                <button class="w-full bg-[#A700FF] text-white text-[14px] font-bold py-2.5 rounded-full shadow-lg active:scale-95 transition-transform">立即开始 (按配置收费)</button>
+                                                <button class="w-full bg-slate-100 text-slate-500 text-[14px] font-bold py-2.5 rounded-full active:scale-95 transition-transform">按配置收费</button>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+
+                                <!-- 模块 2: 会议纪要 -->
+                                <div class="mb-5">
+                                    <div class="w-full h-px border-t border-dashed border-slate-300/60 my-5"></div>
+                                    <div class="px-1 flex items-center justify-between mb-4">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-1.5 h-4 bg-[#A700FF] rounded-full"></div>
+                                            <h3 class="text-[18px] font-medium text-slate-900 tracking-tight">更多功能</h3>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 bg-[#F5F3FF] border border-[#E9D5FF] px-4 py-1.5 rounded-full cursor-pointer hover:bg-white transition-colors">
+                                            <i class="fas fa-flask text-[#A700FF] text-[12px]"></i>
+                                            <span class="text-[#A700FF] text-[12px] font-bold">实验室</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="section-wrapper flex flex-col gap-4 relative">
+                                        <!-- 会议纪要卡片 -->
+                                        <div class="flex flex-col relative z-20">
+                                            <div class="crystal-banner px-5 py-4 w-full flex flex-col gap-1.5 group shadow-sm cursor-pointer" id="summary-card">
+                                                <div class="relative z-10 w-full flex flex-col gap-2">
+                                                    <div class="flex items-center gap-2.5">
+                                                        <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-[#F5F3FF]">
+                                                            <img src="https://raw.githubusercontent.com/BabyMoira/Pnutsicons/refs/heads/main/AI.svg" class="w-6 h-6 force-purple" alt="icon">
+                                                        </div>
+                                                        <span class="font-bold text-slate-800 text-[18px]">会议纪要</span>
+                                                    </div>
+                                                    
+                                                    <div class="flex items-start justify-between w-full gap-2 mt-1">
+                                                        <p class="flex-1 min-w-0 text-slate-500 text-[13px] leading-tight break-words mt-0.5">极致精准记录，会议结束一键直出总结</p>
+                                                        <button onclick="toggleSummaryPanel(event)" id="summary-toggle-btn" class="bg-[#F5F3FF] text-[#A700FF]/60 px-2.5 py-1 rounded-full text-[11px] flex items-center gap-1 font-bold transition-all outline-none active:scale-95 hover:bg-[#A700FF] hover:text-white flex-shrink-0 whitespace-nowrap">
+                                                            <span>展开</span> <i class="fas fa-chevron-down text-[9px] mt-[1px] transition-transform duration-300"></i>
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="flex items-center justify-between mt-1 pt-1 border-t border-transparent">
+                                                        <div class="flex items-baseline gap-1">
+                                                            <span class="text-2xl font-bold font-num text-[#A700FF]">50</span>
+                                                            <span class="text-sm text-slate-400">点/分钟</span>
+                                                        </div>
+                                                        <button class="bg-[#A700FF] text-white text-[14px] px-6 py-2.5 rounded-full font-bold shadow-md active:scale-95 hover:bg-[#8B00D5] transition-colors">立即开始</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- 纪要详情面板：去掉紫色粗边，改为通透高级的弥散阴影与极细描边 -->
+                                            <div id="summary-details-panel" class="hidden w-full bg-white rounded-[20px] shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-100/80 mt-3 overflow-hidden relative z-10 animate-fade-in-down">
+                                                <div class="p-5 flex flex-col gap-3">
+                                                    <div class="space-y-4 text-slate-600 text-[14px] leading-relaxed">
+                                                        <div class="flex gap-2.5 items-start">
+                                                            <i class="fas fa-circle text-[#A700FF] text-[6px] mt-[8px] flex-shrink-0 opacity-80"></i>
+                                                            <p class="text-justify text-slate-800 leading-relaxed">将高端会场的顶尖同传技术，应用于日常文字记录。依托 Pnuts 核心同传引擎，提供极致精准的语音转文字能力，完美还原完整文字实录，无惧任何细节丢失。</p>
+                                                        </div>
+                                                        <div class="flex gap-2.5 items-start">
+                                                            <i class="fas fa-circle text-[#A700FF] text-[6px] mt-[8px] flex-shrink-0 opacity-80"></i>
+                                                            <p class="text-justify leading-relaxed">一键直出，极速总结。基于精准文字底稿，只需一键AI能够精准提炼核心议题与结论，即刻生成高质量纪要，真正实现“会开完，事记完”</p>
+                                                        </div>
+                                                        <div class="flex gap-2.5 items-start">
+                                                            <i class="fas fa-circle text-[#A700FF] text-[6px] mt-[8px] flex-shrink-0 opacity-80"></i>
+                                                            <p class="text-justify text-slate-800 leading-relaxed">支持 AI对话式精准修整，直达100%完美。在自动总结的基础上，支持像聊天一样指挥 AI进行微调。无论是补充细节还是调整措辞，只需简单的对话指令，即可快速获得可直接交付的专业级纪要。</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="pt-2 mt-2">
+                                                        <button class="w-full bg-[#A700FF] text-white text-[14px] font-bold py-2.5 rounded-full shadow-lg active:scale-95 transition-transform">立即开始 (50点/分钟)</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div class="glass-card p-4 flex flex-col items-start h-auto min-h-[120px] group relative cursor-pointer">
+                                                <div class="w-full flex justify-between items-start mb-2">
+                                                    <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-[#F5F3FF]">
+                                                        <img src="https://raw.githubusercontent.com/BabyMoira/Pnutsicons/refs/heads/main/duihua.svg" class="w-6 h-6 force-purple" alt="icon">
+                                                    </div>
+                                                    <div class="w-6 h-6 rounded-full bg-[#F5F3FF]/80 flex items-center justify-center transition-all cursor-pointer hover:bg-[#A700FF] group-arrow-hover">
+                                                        <i class="fas fa-arrow-right transform -rotate-45 text-[10px] text-[#A700FF]/70 hover:text-white"></i>
+                                                    </div>
+                                                </div>
+                                                <h4 class="font-bold text-slate-800 text-[16px] mb-1 leading-tight">对话沟通<span class="text-[12px] font-medium text-slate-500 ml-0.5">（Beta）</span></h4>
+                                                <p class="text-slate-400 text-[12px] leading-tight break-words mb-1">多人跨语种交流</p>
+                                                <div class="mt-auto flex items-baseline gap-1 pt-2">
+                                                    <span class="text-[#A700FF] font-bold text-[20px] font-num">50</span>
+                                                    <span class="text-slate-400 text-[12px]">点/分钟</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- 更多功能占位卡片：移除虚线与紫色，改为柔和的灰调白玻璃质感 -->
+                                            <div class="p-4 flex flex-col items-center justify-center gap-1 h-auto min-h-[120px] rounded-[20px] border border-white/80 bg-white/40 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] backdrop-blur-md hover:bg-white/60 transition-colors cursor-default">
+                                                <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100/80 text-slate-400 mb-1">
+                                                    <i class="fas fa-ellipsis-h text-lg"></i>
+                                                </div>
+                                                <span class="font-bold text-slate-500 text-[14px]">更多功能</span>
+                                                <p class="text-slate-400 text-[11px] leading-tight">敬请期待...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- 正确闭合 home-top-content -->
+
+                        <!-- 历史房间板块 -->
+                        <div id="history-section" class="mt-5 mb-5">
+                            <!-- 移除了固定的 shadow-sm，投影过渡由 CSS 控制 -->
+                            <div class="search-card-container glass-card p-5 space-y-4 sticky top-[70px] sm:top-[78px] z-[90] mb-4">
+                                <div class="flex items-center justify-start gap-8 w-full">
+                                    <div class="tab-title active">我创建的</div>
+                                    <div class="tab-title text-slate-400 cursor-pointer hover:text-slate-600 transition-colors">我管理的</div>
+                                </div>
+                                <div class="w-full">
+                                    <div class="w-full bg-[#F5F6FA] rounded-xl h-11 flex items-center px-4 gap-3 border border-transparent focus-within:border-[#A700FF]/30 transition-all">
+                                        <i class="fas fa-search text-slate-300 text-sm"></i>
+                                        <input type="text" placeholder="搜索房间名称或ID" class="bg-transparent w-full text-sm outline-none text-slate-700 placeholder-slate-400 font-medium">
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3 w-full">
+                                    <div class="w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 text-sm flex-shrink-0 shadow-sm hover:border-[#A700FF] hover:text-[#A700FF] transition-all cursor-pointer">
+                                        <i class="fas fa-filter"></i>
+                                    </div>
+                                    <div class="flex gap-2.5 overflow-x-auto hide-scrollbar flex-1 items-center w-full pb-1">
+                                        <button class="chip active px-4 py-1.5 text-[12px] font-medium whitespace-nowrap flex-shrink-0">近三天</button>
+                                        <button class="chip px-4 py-1.5 text-[12px] font-medium whitespace-nowrap flex-shrink-0 hover:border-[#A700FF]/50">昨天</button>
+                                        <button class="chip px-4 py-1.5 text-[12px] font-medium whitespace-nowrap flex-shrink-0 hover:border-[#A700FF]/50">本周</button>
+                                        <button class="chip px-4 py-1.5 text-[12px] font-medium whitespace-nowrap flex-shrink-0 hover:border-[#A700FF]/50">上周</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 mb-4 px-1">
+                                 <div class="w-1.5 h-4 bg-[#A700FF] rounded-full"></div>
+                                 <h2 class="text-[17px] font-medium text-slate-900 tracking-tight">房间列表 <span class="text-slate-400 font-normal text-sm ml-1">(3)</span></h2>
+                            </div>
+
+                            <div class="space-y-4" id="room-list-container">
+                                <!-- 卡片 1 -->
+                                <div class="glass-card p-4 space-y-3 hover:border-[#A700FF]/50 transition-colors group cursor-pointer">
+                                    <div class="flex justify-between items-start gap-3">
+                                        <h4 class="font-bold text-slate-900 text-[16px] flex-1 break-words leading-snug">2026.03.10-09:30 跨国高管沟通会议</h4>
+                                        <i class="fas fa-pen text-slate-300 text-[12px] pt-1.5 hover:text-[#A700FF] transition-colors flex-shrink-0"></i>
+                                    </div>
+                                    <div class="flex flex-col gap-2.5 text-[12px] text-slate-500 font-num w-full mt-1.5">
+                                        <div class="flex flex-wrap items-center gap-y-2 gap-x-3 w-full">
+                                            <!-- ID：固定宽度保证对齐 -->
+                                            <div class="flex items-center gap-1.5 w-[68px] flex-shrink-0">
+                                                <i class="fas fa-hashtag text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
+                                                <span class="whitespace-nowrap">3646</span>
+                                            </div>
+                                            <!-- 用户名：移除宽度限制，添加 whitespace-nowrap 和 flex-shrink-0 确保完整不换行，放不下时整体掉落 -->
+                                            <div class="flex items-center gap-1.5 mr-auto flex-shrink-0">
+                                                <i class="fas fa-user text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
+                                                <span class="whitespace-nowrap">harrison_developer</span>
+                                            </div>
+                                            <!-- 时长：作为完整的不换行数据块 -->
+                                            <div class="flex items-center gap-1.5 whitespace-nowrap flex-shrink-0">
+                                                <i class="far fa-clock text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
+                                                <span>1天 5小时 31分</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 min-w-0">
+                                            <i class="fas fa-calendar-alt text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
+                                            <span class="whitespace-nowrap tracking-tight">2026-03-10 09:30:00 <span class="opacity-60">(GMT+8)</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2.5 pt-2">
+                                        <button class="flex-1 py-2 rounded-xl text-[13px] border border-slate-200 text-slate-500 font-medium hover:bg-white transition-colors">分享</button>
+                                        <button class="flex-1 py-2 rounded-xl text-[13px] border border-slate-200 text-slate-500 font-medium hover:bg-white transition-colors">设置</button>
+                                        <button class="bg-[#F5F3FF] text-[#A700FF] flex-[1.2] py-2 rounded-xl text-[13px] font-bold active:scale-95 transition-all hover:bg-[#A700FF] hover:text-white">进入</button>
+                                    </div>
+                                </div>
+
+                                <!-- 卡片 2 -->
+                                <div class="glass-card p-4 space-y-3 hover:border-[#A700FF]/50 transition-colors group cursor-pointer">
+                                    <div class="flex justify-between items-start gap-3">
+                                        <h4 class="font-bold text-slate-900 text-[16px] flex-1 break-words leading-snug">2026.03.09-14:00 亚太区产品发布会同传</h4>
+                                        <i class="fas fa-pen text-slate-300 text-[12px] pt-1.5 hover:text-[#A700FF] transition-colors flex-shrink-0"></i>
+                                    </div>
+                                    <div class="flex flex-col gap-2.5 text-[12px] text-slate-500 font-num w-full mt-1.5">
+                                        <div class="flex flex-wrap items-center gap-y-2 gap-x-3 w-full">
+                                            <div class="flex items-center gap-1.5 w-[68px] flex-shrink-0">
+                                                <i class="fas fa-hashtag text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
+                                                <span class="whitespace-nowrap">8821</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5 mr-auto flex-shrink-0">
+                                                <i class="fas fa-user text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
+                                                <span class="whitespace-nowrap">alice_wang_marketing</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5 whitespace-nowrap flex-shrink-0">
+                                                <i class="far fa-clock text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
+                                                <span>2小时 45分</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 min-w-0">
+                                            <i class="fas fa-calendar-alt text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
+                                            <span class="whitespace-nowrap tracking-tight">2026-03-09 14:00:00 <span class="opacity-60">(GMT+8)</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2.5 pt-2">
+                                        <button class="flex-1 py-2 rounded-xl text-[13px] border border-slate-200 text-slate-500 font-medium hover:bg-white transition-colors">分享</button>
+                                        <button class="flex-1 py-2 rounded-xl text-[13px] border border-slate-200 text-slate-500 font-medium hover:bg-white transition-colors">设置</button>
+                                        <button class="bg-[#F5F3FF] text-[#A700FF] flex-[1.2] py-2 rounded-xl text-[13px] font-bold active:scale-95 transition-all hover:bg-[#A700FF] hover:text-white">进入</button>
+                                    </div>
+                                </div>
+
+                                <!-- 卡片 3 -->
+                                <div class="glass-card p-4 space-y-3 hover:border-[#A700FF]/50 transition-colors group cursor-pointer">
+                                    <div class="flex justify-between items-start gap-3">
+                                        <h4 class="font-bold text-slate-900 text-[16px] flex-1 break-words leading-snug">2026.03.08-10:15 研发团队周会纪要</h4>
+                                        <i class="fas fa-pen text-slate-300 text-[12px] pt-1.5 hover:text-[#A700FF] transition-colors flex-shrink-0"></i>
+                                    </div>
+                                    <div class="flex flex-col gap-2.5 text-[12px] text-slate-500 font-num w-full mt-1.5">
+                                        <div class="flex flex-wrap items-center gap-y-2 gap-x-3 w-full">
+                                            <div class="flex items-center gap-1.5 w-[68px] flex-shrink-0">
+                                                <i class="fas fa-hashtag text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
+                                                <span class="whitespace-nowrap">1092</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5 mr-auto flex-shrink-0">
+                                                <i class="fas fa-user text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
+                                                <span class="whitespace-nowrap">david_chen_engineering_lead</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5 whitespace-nowrap flex-shrink-0">
+                                                <i class="far fa-clock text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
+                                                <span>45分</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 min-w-0">
+                                            <i class="fas fa-calendar-alt text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
+                                            <span class="whitespace-nowrap tracking-tight">2026-03-08 10:15:00 <span class="opacity-60">(GMT+8)</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2.5 pt-2">
+                                        <button class="flex-1 py-2 rounded-xl text-[13px] border border-slate-200 text-slate-500 font-medium hover:bg-white transition-colors">分享</button>
+                                        <button class="flex-1 py-2 rounded-xl text-[13px] border border-slate-200 text-slate-500 font-medium hover:bg-white transition-colors">设置</button>
+                                        <button class="bg-[#F5F3FF] text-[#A700FF] flex-[1.2] py-2 rounded-xl text-[13px] font-bold active:scale-95 transition-all hover:bg-[#A700FF] hover:text-white">进入</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- 模块 2: 会议纪要 -->
-                        <div class="mb-5">
-                             <div class="w-full h-px border-t border-dashed border-slate-300/60 my-5"></div>
-                             <div class="px-1 flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-1.5 h-4 bg-[#A700FF] rounded-full"></div>
-                                    <h3 class="text-[18px] font-medium text-slate-900 tracking-tight">更多功能</h3>
-                                </div>
-                                <div class="flex items-center gap-1.5 bg-[#F5F3FF] border border-[#E9D5FF] px-4 py-1.5 rounded-full cursor-pointer hover:bg-white transition-colors">
-                                    <i class="fas fa-flask text-[#A700FF] text-[12px]"></i>
-                                    <span class="text-[#A700FF] text-[12px] font-bold">实验室</span>
-                                </div>
-                            </div>
+                </div>
 
-                            <div class="section-wrapper flex flex-col gap-4 relative">
-                                <!-- 会议纪要卡片 -->
-                                <div class="flex flex-col relative z-20">
-                                    <div class="crystal-banner px-5 py-4 w-full flex flex-col gap-1.5 group shadow-sm cursor-pointer" id="summary-card">
-                                        <div class="relative z-10 w-full flex flex-col gap-2">
-                                            <div class="flex items-center gap-2.5">
-                                                <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-[#F5F3FF]">
-                                                    <img src="https://raw.githubusercontent.com/BabyMoira/Pnutsicons/refs/heads/main/AI.svg" class="w-6 h-6 force-purple" alt="icon">
-                                                </div>
-                                                <span class="font-bold text-slate-800 text-[18px]">会议纪要</span>
-                                            </div>
-                                            
-                                            <div class="flex items-start justify-between w-full gap-2 mt-1">
-                                                <p class="flex-1 min-w-0 text-slate-500 text-[13px] leading-tight break-words mt-0.5">极致精准记录，会议结束一键直出总结</p>
-                                                <button onclick="toggleSummaryPanel(event)" id="summary-toggle-btn" class="bg-[#F5F3FF] text-[#A700FF]/60 px-2.5 py-1 rounded-full text-[11px] flex items-center gap-1 font-bold transition-all outline-none active:scale-95 hover:bg-[#A700FF] hover:text-white flex-shrink-0 whitespace-nowrap">
-                                                    <span>展开</span> <i class="fas fa-chevron-down text-[9px] mt-[1px] transition-transform duration-300"></i>
-                                                </button>
-                                            </div>
-
-                                            <div class="flex items-center justify-between mt-1 pt-1 border-t border-transparent">
-                                                <div class="flex items-baseline gap-1">
-                                                    <span class="text-2xl font-bold font-num text-[#A700FF]">50</span>
-                                                    <span class="text-sm text-slate-400">点/分钟</span>
-                                                </div>
-                                                <button class="bg-[#A700FF] text-white text-[14px] px-6 py-2.5 rounded-full font-bold shadow-md active:scale-95 hover:bg-[#8B00D5] transition-colors">立即开始</button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- 纪要详情面板：去掉紫色粗边，改为通透高级的弥散阴影与极细描边 -->
-                                    <div id="summary-details-panel" class="hidden w-full bg-white rounded-[20px] shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-100/80 mt-3 overflow-hidden relative z-10 animate-fade-in-down">
-                                        <div class="p-5 flex flex-col gap-3">
-                                            <div class="space-y-4 text-slate-600 text-[14px] leading-relaxed">
-                                                <div class="flex gap-2.5 items-start">
-                                                    <i class="fas fa-circle text-[#A700FF] text-[6px] mt-[8px] flex-shrink-0 opacity-80"></i>
-                                                    <p class="text-justify text-slate-800 leading-relaxed">将高端会场的顶尖同传技术，应用于日常文字记录。依托 Pnuts 核心同传引擎，提供极致精准的语音转文字能力，完美还原完整文字实录，无惧任何细节丢失。</p>
-                                                </div>
-                                                <div class="flex gap-2.5 items-start">
-                                                    <i class="fas fa-circle text-[#A700FF] text-[6px] mt-[8px] flex-shrink-0 opacity-80"></i>
-                                                    <p class="text-justify leading-relaxed">一键直出，极速总结。基于精准文字底稿，只需一键AI能够精准提炼核心议题与结论，即刻生成高质量纪要，真正实现“会开完，事记完”</p>
-                                                </div>
-                                                <div class="flex gap-2.5 items-start">
-                                                    <i class="fas fa-circle text-[#A700FF] text-[6px] mt-[8px] flex-shrink-0 opacity-80"></i>
-                                                    <p class="text-justify text-slate-800 leading-relaxed">支持 AI对话式精准修整，直达100%完美。在自动总结的基础上，支持像聊天一样指挥 AI进行微调。无论是补充细节还是调整措辞，只需简单的对话指令，即可快速获得可直接交付的专业级纪要。</p>
-                                                </div>
-                                            </div>
-                                            <div class="pt-2 mt-2">
-                                                <button class="w-full bg-[#A700FF] text-white text-[14px] font-bold py-2.5 rounded-full shadow-lg active:scale-95 transition-transform">立即开始 (50点/分钟)</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="glass-card p-4 flex flex-col items-start h-auto min-h-[120px] group relative cursor-pointer">
-                                        <div class="w-full flex justify-between items-start mb-2">
-                                            <div class="icon-box w-10 h-10 rounded-xl flex items-center justify-center bg-[#F5F3FF]">
-                                                <img src="https://raw.githubusercontent.com/BabyMoira/Pnutsicons/refs/heads/main/duihua.svg" class="w-6 h-6 force-purple" alt="icon">
-                                            </div>
-                                            <div class="w-6 h-6 rounded-full bg-[#F5F3FF]/80 flex items-center justify-center transition-all cursor-pointer hover:bg-[#A700FF] group-arrow-hover">
-                                                <i class="fas fa-arrow-right transform -rotate-45 text-[10px] text-[#A700FF]/70 hover:text-white"></i>
-                                            </div>
-                                        </div>
-                                        <h4 class="font-bold text-slate-800 text-[16px] mb-1 leading-tight">对话沟通<span class="text-[12px] font-medium text-slate-500 ml-0.5">（Beta）</span></h4>
-                                        <p class="text-slate-400 text-[12px] leading-tight break-words mb-1">多人跨语种交流</p>
-                                        <div class="mt-auto flex items-baseline gap-1 pt-2">
-                                            <span class="text-[#A700FF] font-bold text-[20px] font-num">50</span>
-                                            <span class="text-slate-400 text-[12px]">点/分钟</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- 更多功能占位卡片：移除虚线与紫色，改为柔和的灰调白玻璃质感 -->
-                                    <div class="p-4 flex flex-col items-center justify-center gap-1 h-auto min-h-[120px] rounded-[20px] border border-white/80 bg-white/40 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] backdrop-blur-md hover:bg-white/60 transition-colors cursor-default">
-                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100/80 text-slate-400 mb-1">
-                                            <i class="fas fa-ellipsis-h text-lg"></i>
-                                        </div>
-                                        <span class="font-bold text-slate-500 text-[14px]">更多功能</span>
-                                        <p class="text-slate-400 text-[11px] leading-tight">敬请期待...</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> <!-- 正确闭合 home-top-content -->
-
-                    <!-- 历史房间板块 -->
-                    <div id="history-section" class="mt-5 mb-5">
-                        <div class="search-card-container glass-card p-5 space-y-4 sticky top-0 z-20 mb-4 shadow-sm">
+                <!-- ================== 页面 2：历史房间独立页面 ================== -->
+                <div id="view-history" class="px-4 mt-3 hidden">
+                    <div id="history-page-section" class="mb-5">
+                        <!-- 独立复用的搜索与筛选区 -->
+                        <div class="search-card-container glass-card p-5 space-y-4 sticky top-[70px] sm:top-[78px] z-[90] mb-4">
                             <div class="flex items-center justify-start gap-8 w-full">
                                 <div class="tab-title active">我创建的</div>
                                 <div class="tab-title text-slate-400 cursor-pointer hover:text-slate-600 transition-colors">我管理的</div>
@@ -531,16 +672,18 @@
                                     <button class="chip px-4 py-1.5 text-[12px] font-medium whitespace-nowrap flex-shrink-0 hover:border-[#A700FF]/50">昨天</button>
                                     <button class="chip px-4 py-1.5 text-[12px] font-medium whitespace-nowrap flex-shrink-0 hover:border-[#A700FF]/50">本周</button>
                                     <button class="chip px-4 py-1.5 text-[12px] font-medium whitespace-nowrap flex-shrink-0 hover:border-[#A700FF]/50">上周</button>
-                                </div>
+                                    <button class="chip px-4 py-1.5 text-[12px] font-medium whitespace-nowrap flex-shrink-0 hover:border-[#A700FF]/50">更早</button>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="flex items-center gap-2 mb-4 px-1">
-                             <div class="w-1.5 h-4 bg-[#A700FF] rounded-full"></div>
-                             <h2 class="text-[17px] font-medium text-slate-900 tracking-tight">房间列表 <span class="text-slate-400 font-normal text-sm ml-1">(3)</span></h2>
-                        </div>
+                    <div class="flex items-center gap-2 mb-4 px-1">
+                         <div class="w-1.5 h-4 bg-[#A700FF] rounded-full"></div>
+                         <h2 class="text-[17px] font-medium text-slate-900 tracking-tight">房间列表 <span class="text-slate-400 font-normal text-sm ml-1">(3)</span></h2>
+                    </div>
 
-                        <div class="space-y-4" id="room-list-container">
+                    <!-- 独立复用的房间列表 -->
+                    <div class="space-y-4 room-list-container">
                             <!-- 卡片 1 -->
                             <div class="glass-card p-4 space-y-3 hover:border-[#A700FF]/50 transition-colors group cursor-pointer">
                                 <div class="flex justify-between items-start gap-3">
@@ -549,17 +692,14 @@
                                 </div>
                                 <div class="flex flex-col gap-2.5 text-[12px] text-slate-500 font-num w-full mt-1.5">
                                     <div class="flex flex-wrap items-center gap-y-2 gap-x-3 w-full">
-                                        <!-- ID：固定宽度保证对齐 -->
                                         <div class="flex items-center gap-1.5 w-[68px] flex-shrink-0">
                                             <i class="fas fa-hashtag text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
                                             <span class="whitespace-nowrap">3646</span>
                                         </div>
-                                        <!-- 用户名：移除宽度限制，添加 whitespace-nowrap 和 flex-shrink-0 确保完整不换行，放不下时整体掉落 -->
                                         <div class="flex items-center gap-1.5 mr-auto flex-shrink-0">
                                             <i class="fas fa-user text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
                                             <span class="whitespace-nowrap">harrison_developer</span>
                                         </div>
-                                        <!-- 时长：作为完整的不换行数据块 -->
                                         <div class="flex items-center gap-1.5 whitespace-nowrap flex-shrink-0">
                                             <i class="far fa-clock text-slate-400 text-[11px] w-3.5 text-center flex-shrink-0"></i>
                                             <span>1天 5小时 31分</span>
@@ -646,7 +786,7 @@
                     </div>
                 </div>
 
-                <!-- 修复底部文本对齐：添加 w-full 和 block 确保居中并占满整行 -->
+                <!-- 通用底部标识，放置在两个页面外部 -->
                 <div class="text-center py-8 text-sm text-slate-300 w-full block">已经到底了 ~</div>
             </main>
 
@@ -664,18 +804,29 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- 交互脚本 -->
     <script>
         function switchTab(tabName, element) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
-            const homeTop = document.getElementById('home-top-content');
-            if (tabName === 'home') homeTop.classList.remove('hidden');
-            else homeTop.classList.add('hidden');
+            
+            // 获取独立的页面容器
+            const viewHome = document.getElementById('view-home');
+            const viewHistory = document.getElementById('view-history');
+            
+            if (tabName === 'home') {
+                viewHome.classList.remove('hidden');
+                if (viewHistory) viewHistory.classList.add('hidden');
+            } else {
+                viewHome.classList.add('hidden');
+                if (viewHistory) viewHistory.classList.remove('hidden');
+            }
+            // 切换时让页面滚动回顶部
             document.getElementById('main-scroll-container').scrollTo({ top: 0, behavior: 'auto' });
-            if (typeof handleScroll === 'function') handleScroll(); // 切换 tab 时重新计算阴影状态
+            
+            // 延迟计算投影，确保DOM显示完毕
+            if (typeof handleScroll === 'function') setTimeout(handleScroll, 50);
         }
 
         function toggleHeroPanel(e) { e.stopPropagation(); toggleSpecificPanel('hero-details-panel', 'hero-card', '#hero-toggle-btn i'); }
@@ -729,19 +880,37 @@
             }
         }
 
-        // --- 底部导航阴影滚动联动控制 ---
+        // --- 底部导航及顶部吸附阴影滚动联动控制 ---
         const scrollContainer = document.getElementById('main-scroll-container');
         const bottomNav = document.getElementById('bottom-nav');
 
         function handleScroll() {
-            if (!scrollContainer || !bottomNav) return;
-            // 判断是否滚动到底部（留有 5px 误差余量以防设备缩放导致的小数精度问题）
-            const isAtBottom = Math.abs(scrollContainer.scrollHeight - scrollContainer.clientHeight - scrollContainer.scrollTop) <= 5;
+            if (!scrollContainer) return;
             
-            if (isAtBottom) {
-                bottomNav.classList.remove('has-shadow');
-            } else {
-                bottomNav.classList.add('has-shadow');
+            // 底部导航阴影逻辑
+            if (bottomNav) {
+                const isAtBottom = Math.abs(scrollContainer.scrollHeight - scrollContainer.clientHeight - scrollContainer.scrollTop) <= 5;
+                if (isAtBottom) {
+                    bottomNav.classList.remove('has-shadow');
+                } else {
+                    bottomNav.classList.add('has-shadow');
+                }
+            }
+
+            // 搜索区吸顶阴影逻辑 (现在支持多个页面的卡片独立计算)
+            const searchCards = document.querySelectorAll('.search-card-container');
+            if (searchCards.length > 0) {
+                const stickyOffset = window.innerWidth >= 640 ? 78 : 70;
+                searchCards.forEach(searchCard => {
+                    // 只计算当前显示在页面中 (未被 display: none 隐藏) 的卡片
+                    if (searchCard.offsetParent !== null) {
+                        if (searchCard.getBoundingClientRect().top <= stickyOffset + 1) {
+                            searchCard.classList.add('is-pinned');
+                        } else {
+                            searchCard.classList.remove('is-pinned');
+                        }
+                    }
+                });
             }
         }
 
